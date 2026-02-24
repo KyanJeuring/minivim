@@ -1,0 +1,14 @@
+# Normalize text files to avoid OS-specific diffs
+* text=auto eol=lf
+
+# Treat common binary files correctly
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary
+*.tar  binary
+*.gz   binary
+*.7z   binary
