@@ -387,6 +387,7 @@ local function close_buffer_tab()
   end
 end
 
+-- Tab navigation
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", { silent = true })
 vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })
 vim.keymap.set("n", "gt", ":bnext<CR>", { silent = true })
@@ -509,6 +510,7 @@ vim.api.nvim_create_user_command("Q", function(opts)
   end
 end, { bang = true })
 
+-- Allow :q, :q!, and :quit to use the same logic as :Q
 vim.cmd([[
   cnoreabbrev <expr> q     getcmdtype()==':' && getcmdline()=='q'     ? 'Q' : 'q'
   cnoreabbrev <expr> q!    getcmdtype()==':' && getcmdline()=='q!'    ? 'Q!' : 'q!'
@@ -617,12 +619,14 @@ local function open_keys_help()
 
   vim.api.nvim_buf_add_highlight(buf, -1, "KeysHelpTitle", PAD_Y, 0, -1)
 
+  -- Close on q or Esc
   vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = buf, silent = true })
   vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", { buffer = buf, silent = true })
 end
 
 vim.api.nvim_create_user_command("Keys", open_keys_help, {})
 
+-- Allow multiple command variants for opening the keybindings overview
 vim.cmd([[
   cnoreabbrev <expr> keys      getcmdtype()==':' && getcmdline()=='keys'      ? 'Keys' : 'keys'
   cnoreabbrev <expr> keybinds  getcmdtype()==':' && getcmdline()=='keybinds'  ? 'Keys' : 'keybinds'

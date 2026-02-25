@@ -110,6 +110,12 @@ require("lazy").setup({
               end,
               color = function()
                 local mode = vim.fn.mode()
+
+                -- ======================================================
+                -- Colors for different modes
+                -- Customize these colors as you like
+                -- ======================================================
+
                 local colors = {
                   n = { bg = "#21252b", fg = "#abb2bf" }, -- NORMAL
                   i = { bg = "#ff7700", fg = FG_DARK },   -- INSERT
@@ -250,6 +256,7 @@ require("lazy").setup({
 
       local grp = vim.api.nvim_create_augroup("NvimTreeWidthLock", { clear = true })
 
+      -- Lock width on VimResized, WinEnter, and BufWinEnter to handle resizing and new windows
       vim.api.nvim_create_autocmd({ "VimResized", "WinEnter", "BufWinEnter" }, {
         group = grp,
         callback = lock_tree_width,
