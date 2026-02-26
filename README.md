@@ -23,6 +23,12 @@ It is intentionally small.
 
 ---
 
+## Demo
+
+![Demo](./assets/demo.gif)
+
+---
+
 ## Features
 
 - Pure Lua configuration
