@@ -610,7 +610,7 @@ local function open_keys_help()
   local row = math.floor((editor_height - height) / 2)
   local col = math.floor((editor_width - width) / 2)
 
-  local win = vim.api.nvim_open_win(buf, true, {
+  vim.api.nvim_open_win(buf, true, {
     relative = "editor",
     width = width,
     height = height,
