@@ -595,7 +595,7 @@ local function open_keys_help()
 
   vim.bo[buf].modifiable = false
   vim.bo[buf].bufhidden = "wipe"
-  vim.bo[buf].filetype = "help"
+  vim.bo[buf].filetype = "keyshelp"
   vim.bo[buf].readonly = true
 
   local width  = compute_width(lines) + PAD_X * 2 + 2
