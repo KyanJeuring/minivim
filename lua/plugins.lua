@@ -110,12 +110,6 @@ require("lazy").setup({
               end,
               color = function()
                 local mode = vim.fn.mode()
-
-                -- ======================================================
-                -- Colors for different modes
-                -- Customize these colors as you like
-                -- ======================================================
-
                 local colors = {
                   n = { bg = "#21252b", fg = "#abb2bf" }, -- NORMAL
                   i = { bg = "#ff7700", fg = FG_DARK },   -- INSERT
@@ -245,18 +239,38 @@ require("lazy").setup({
 
       -- Lock NvimTree window width
       local function lock_tree_width()
+        local normal_wins = {}
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          local cfg = vim.api.nvim_win_get_config(win)
+          if cfg.relative == "" then
+            table.insert(normal_wins, win)
+          end
+        end
+
+        local has_non_tree_normal = false
+        for _, win in ipairs(normal_wins) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].filetype ~= "NvimTree" then
+            has_non_tree_normal = true
+            break
+          end
+        end
+
         for _, win in ipairs(vim.api.nvim_list_wins()) do
           local buf = vim.api.nvim_win_get_buf(win)
           if vim.bo[buf].filetype == "NvimTree" then
-            pcall(vim.api.nvim_win_set_width, win, 30)
-            pcall(vim.api.nvim_win_set_option, win, "winfixwidth", true)
+            if has_non_tree_normal then
+              pcall(vim.api.nvim_win_set_width, win, 30)
+              pcall(vim.api.nvim_win_set_option, win, "winfixwidth", true)
+            else
+              pcall(vim.api.nvim_win_set_option, win, "winfixwidth", false)
+            end
           end
         end
       end
 
       local grp = vim.api.nvim_create_augroup("NvimTreeWidthLock", { clear = true })
 
-      -- Lock width on VimResized, WinEnter, and BufWinEnter to handle resizing and new windows
       vim.api.nvim_create_autocmd({ "VimResized", "WinEnter", "BufWinEnter" }, {
         group = grp,
         callback = lock_tree_width,
