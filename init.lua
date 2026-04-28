@@ -387,7 +387,6 @@ local function close_buffer_tab()
   end
 end
 
--- Tab navigation
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", { silent = true })
 vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })
 vim.keymap.set("n", "gt", ":bnext<CR>", { silent = true })
@@ -510,7 +509,6 @@ vim.api.nvim_create_user_command("Q", function(opts)
   end
 end, { bang = true })
 
--- Allow :q, :q!, and :quit to use the same logic as :Q
 vim.cmd([[
   cnoreabbrev <expr> q     getcmdtype()==':' && getcmdline()=='q'     ? 'Q' : 'q'
   cnoreabbrev <expr> q!    getcmdtype()==':' && getcmdline()=='q!'    ? 'Q!' : 'q!'
@@ -598,16 +596,21 @@ local function open_keys_help()
   vim.bo[buf].filetype = "keyshelp"
   vim.bo[buf].readonly = true
 
-  local width  = compute_width(lines) + PAD_X * 2 + 2
-  local height = #padded + 1
-  local ui = vim.api.nvim_list_uis()[1]
+  local editor_width = vim.o.columns
+  local editor_height = vim.o.lines - (vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0))
 
-  local cmd_height = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  local content_width = compute_width(lines) + PAD_X * 2 + 2
+  local max_width = math.max(40, editor_width - 4)
+  local width = math.min(content_width, max_width)
 
-  local row = math.floor((ui.height - height) / 2) - math.floor(cmd_height / 2)
-  local col = math.floor((ui.width  - width)  / 2)
+  local content_height = #padded + 1
+  local max_height = math.max(10, editor_height - 2)
+  local height = math.min(content_height, max_height)
 
-  vim.api.nvim_open_win(buf, true, {
+  local row = math.floor((editor_height - height) / 2)
+  local col = math.floor((editor_width - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
     relative = "editor",
     width = width,
     height = height,
@@ -619,14 +622,12 @@ local function open_keys_help()
 
   vim.api.nvim_buf_add_highlight(buf, -1, "KeysHelpTitle", PAD_Y, 0, -1)
 
-  -- Close on q or Esc
   vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = buf, silent = true })
   vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", { buffer = buf, silent = true })
 end
 
 vim.api.nvim_create_user_command("Keys", open_keys_help, {})
 
--- Allow multiple command variants for opening the keybindings overview
 vim.cmd([[
   cnoreabbrev <expr> keys      getcmdtype()==':' && getcmdline()=='keys'      ? 'Keys' : 'keys'
   cnoreabbrev <expr> keybinds  getcmdtype()==':' && getcmdline()=='keybinds'  ? 'Keys' : 'keybinds'
